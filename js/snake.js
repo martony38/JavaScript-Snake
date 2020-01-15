@@ -109,7 +109,6 @@ SNAKE.Snake = SNAKE.Snake || (function() {
 
         if (!config||!config.playingBoard) {return;}
         if (localStorage.jsSnakeHighScore === undefined) localStorage.setItem('jsSnakeHighScore', 0);
-        localStorage.setItem('jsSnakeDoorClosed', 0);
 
         // ----- private variables -----
 
@@ -797,7 +796,7 @@ SNAKE.Board = SNAKE.Board || (function() {
 
             elmDoorClosedPanel = document.createElement("div");
             elmDoorClosedPanel.className = "snake-panel-component";
-            elmDoorClosedPanel.innerHTML = "Door Closed: " + localStorage.jsSnakeDoorClosed;
+            elmDoorClosedPanel.innerHTML = "Door Closed: " + jsSnakeDoorClosed;
 
             elmWelcome = createWelcomeElement();
             elmTryAgain = createTryAgainElement();
@@ -1028,7 +1027,12 @@ SNAKE.Board = SNAKE.Board || (function() {
         */
         me.setupPlayingField = function () {
 
+            jsSnakeDoorClosed = 0
+            
+
             if (!elmPlayingField) {createBoardElements();} // create playing field
+            elmDoorClosedPanel.innerHTML = "Door Closed: " + jsSnakeDoorClosed;
+            
 
             // calculate width of our game container
             var cWidth, cHeight;
@@ -1169,9 +1173,8 @@ SNAKE.Board = SNAKE.Board || (function() {
         };
 
         me.doorClosed = function() {
-            var doorClosed = parseInt(localStorage.getItem("jsSnakeDoorClosed"),10) + 1;
-            localStorage.setItem("jsSnakeDoorClosed", doorClosed);
-            elmDoorClosedPanel.innerHTML = "Door Closed: " + localStorage.jsSnakeDoorClosed;
+            jsSnakeDoorClosed++
+            elmDoorClosedPanel.innerHTML = "Door Closed: " + jsSnakeDoorClosed;
             if (!myDoor.randomlyPlaceDoor()) {
                 return false;
             }
