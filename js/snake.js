@@ -109,6 +109,7 @@ SNAKE.Snake = SNAKE.Snake || (function() {
 
         if (!config||!config.playingBoard) {return;}
         if (localStorage.jsSnakeHighScore === undefined) localStorage.setItem('jsSnakeHighScore', 0);
+        localStorage.setItem('jsSnakeDoorClosed', 0);
 
         // ----- private variables -----
 
@@ -760,7 +761,7 @@ SNAKE.Board = SNAKE.Board || (function() {
             myKeyListener,
             isPaused = false,//note: both the board and the snake can be paused
             // Board components
-            elmContainer, elmPlayingField, elmAboutPanel, elmLengthPanel, elmHighscorePanel, elmWelcome, elmTryAgain, elmWin, elmPauseScreen;
+            elmContainer, elmPlayingField, elmAboutPanel, elmLengthPanel, elmHighscorePanel, elmDoorClosedPanel, elmWelcome, elmTryAgain, elmWin, elmPauseScreen;
 
         // --- public variables ---
         me.grid = [];
@@ -794,6 +795,10 @@ SNAKE.Board = SNAKE.Board || (function() {
             elmHighscorePanel.className = "snake-panel-component";
             elmHighscorePanel.innerHTML = "Highscore: " + localStorage.jsSnakeHighScore;
 
+            elmDoorClosedPanel = document.createElement("div");
+            elmDoorClosedPanel.className = "snake-panel-component";
+            elmDoorClosedPanel.innerHTML = "Door Closed: " + localStorage.jsSnakeDoorClosed;
+
             elmWelcome = createWelcomeElement();
             elmTryAgain = createTryAgainElement();
             elmWin = createWinElement();
@@ -814,6 +819,8 @@ SNAKE.Board = SNAKE.Board || (function() {
             elmContainer.appendChild(elmAboutPanel);
             elmContainer.appendChild(elmLengthPanel);
             elmContainer.appendChild(elmHighscorePanel);
+
+            elmContainer.appendChild(elmDoorClosedPanel);
             elmContainer.appendChild(elmWelcome);
             elmContainer.appendChild(elmTryAgain);
             elmContainer.appendChild(elmWin);
@@ -1069,6 +1076,9 @@ SNAKE.Board = SNAKE.Board || (function() {
             elmHighscorePanel.style.top = pLabelTop;
             elmHighscorePanel.style.left = cWidth - 140 + "px";
 
+            elmDoorClosedPanel.style.top = pLabelTop;
+            elmDoorClosedPanel.style.left = cWidth - 340 + "px";
+
             // if width is too narrow, hide the about panel
             if (cWidth < 700) {
                 elmAboutPanel.style.display = "none";
@@ -1159,6 +1169,9 @@ SNAKE.Board = SNAKE.Board || (function() {
         };
 
         me.doorClosed = function() {
+            var doorClosed = parseInt(localStorage.getItem("jsSnakeDoorClosed"),10) + 1;
+            localStorage.setItem("jsSnakeDoorClosed", doorClosed);
+            elmDoorClosedPanel.innerHTML = "Door Closed: " + localStorage.jsSnakeDoorClosed;
             if (!myDoor.randomlyPlaceDoor()) {
                 return false;
             }
