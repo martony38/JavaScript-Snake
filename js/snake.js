@@ -10,6 +10,51 @@ http://patorjk.com/games/snake
 */
 
 var SNAKE = SNAKE || {};
+let questions = [
+  {
+    q: 'Posh Jilat identifies a zero dollar claim that is skewing metrics on the Site of Care Targeted Solution and wants the Data Science team to investigate immediately. He sends the claim number via Hipchat. Please select ‘OK’ if this is a PHI violation, otherwise select ‘Cancel’.',
+    a: true
+  },
+  { // should this question be true or false?
+    q: 'Eddy Dean extracts a subset of data from the warehouse, and successfully runs it through the Truven grouper. He wants to make his work easily accessible to his team for the Episodes of Care project, and uploads both the code and underlying data to Gitlab. Please select ‘OK’ if this is a PHI violation, otherwise select ‘Cancel’.',
+    a: false
+  },
+  {
+    q: 'Eitak Hcsrik needs to share with Taniel Dal the names and SSNs of people who she suspects are causing ETL failures. She includes the information in a text file, and shares it via MyFiles. Please select ‘OK’ if this is a PHI violation, otherwise select ‘Cancel’.',
+    a: false
+  },
+  {
+    q: 'Peb Dartsch is getting coffee with a co-worker while discussing a particular member’s chronic conditions resulting in many people overhearing personal information about this member. Please select ‘OK’ if this is a PHI violation, otherwise select ‘Cancel’.',
+    a: true
+  },
+  {
+    q: 'Fli Elanagan is walking into the office and notices a strange person he has seen hanging around the building following him closely, and quickly closes the door behind him. Because the unauthorized person did not gain entry, Fli decides not to inform security. Please select ‘OK’ if this was the right course of action, otherwise select ‘Cancel’.',
+    a: false
+  },
+  {
+    q: 'Wickey Mieber’s manager Pac Pinkham, asks to borrow his computer in order to check on the logic of some staging jobs. Wickey respectfully follows the instructions of his manager. Please select ‘OK’ if this is a security violation, otherwise select "Cancel".',
+    a: true
+  },
+  {
+    q: 'Slex Achmucker receives an email from a client asking him to download a file via a link. He follows the directions, inputs his office 365 credentials and downloads a dmg for dropbox. Slex then proceeds to try installing dropbox onto his computer only to find out he needs the admin privileges of Mark Sirkoch who realizes this is a security breach and immediately handles the situation. Please select ‘OK’ if this is Mark’s favorite example of a security breach, otherwise select ‘Cancel’.',
+    a: true
+  },
+  {
+    q: 'Koorb Trilharb identifies a member who has a consistently low current risk, but a future risk of more than 5 points greater than the current. She jots down the master member key on a sticky note, and places it on her desk as a reminder to ask Katrick Pelly about it in the morning. She then departs for home. Please select ‘OK’ if this is a PHI violation, otherwise select ‘Cancel’.',
+    a: true
+  },
+  {
+    q: 'A Data Integration Engineer is testing an ETL channel and hardcodes an SSN in Kettle, completes their work and pushes the changes to Github. The reviewer of this pull request notices the hardcoded SSN and asks the engineer to remove it and push the changes. The channel is deemed complete, the branch is merged and the engineers have nothing more to do. Please select ‘OK’ if this is a PHI violation, otherwise select ‘Cancel’.',
+    a: true
+  },
+  {
+    q: 'A DPA askes a client to provide a dental lag claim report and enrollment summary for generating an IBNR report. She receives a response from the client, which includes an attachment. She then forwards the email to a data scientist, who discovers a full enrollment file was accidently sent in lieu of a summary. Please select ‘OK’ if this is a PHI violation, otherwise select ‘Cancel’.',
+    a: true
+  }
+];
+let count = 0;
+
+let revisedQuestions = questions;
 
 /**
 * @method addEventListener
@@ -138,7 +183,7 @@ SNAKE.Snake = SNAKE.Snake || (function() {
                 modeDropdown.addEventListener('change', function(evt) {
                     evt = evt || {};
                     var val = evt.target ? parseInt(evt.target.value) : 75;
-                    
+
                     if (isNaN(val)) {
                         val = 75;
                     } else if (val < 50) {
@@ -234,6 +279,30 @@ SNAKE.Snake = SNAKE.Snake || (function() {
         me.getPaused = function() {
             return isPaused;
         };
+
+        me.questionAsked = function() {
+          // Hacked together, bad practice i know
+          if (!revisedQuestions.length && !count) {
+            alert('You\'ve successfully answered all the questions. Enjoy the rest of the demo and beat my top score!!')
+            count = 1;
+            return true;
+          } else if (!revisedQuestions.length && count) {
+            return true;
+          }
+
+          let randomIndex = Math.floor(Math.random()*revisedQuestions.length);
+          let randomQuestion = revisedQuestions[randomIndex];
+
+          revisedQuestions.splice(randomIndex, 1);
+
+          if (confirm(randomQuestion.q)) {
+            return randomQuestion.a === true ? true : false;
+          } else {
+            return randomQuestion.a === false ? true : false;
+          }
+
+          return true;
+        }
 
         /**
         * This method is called when a user presses a key. It logs arrow key presses in "currentDirection", which is used when the snake needs to make its next move.
@@ -342,7 +411,7 @@ SNAKE.Snake = SNAKE.Snake || (function() {
             } else if (grid[newHead.row][newHead.col] === playingBoard.getGridFoodValue()) {
                 grid[newHead.row][newHead.col] = 1;
                 if (!me.eatFood()) {
-                    me.handleWin();
+                    // me.handleWin();
                     return;
                 }
                 setTimeout(function(){me.go();}, snakeSpeed);
@@ -368,6 +437,17 @@ SNAKE.Snake = SNAKE.Snake || (function() {
         *   or not (false) after the snake eats food.
         */
         me.eatFood = function() {
+            me.setPaused(true);
+
+            if (me.questionAsked()) {
+              me.setPaused(false);
+            } else {
+
+              // this is where the game should end for answering a question wrong
+              me.handleFailure();
+              isDead = true;
+            }
+
             if (blockPool.length <= growthIncr) {
                 createBlocks(growthIncr*2);
             }
@@ -412,6 +492,10 @@ SNAKE.Snake = SNAKE.Snake || (function() {
             handleEndCondition(playingBoard.handleDeath);
         };
 
+        me.handleFailure = function() {
+            handleEndCondition(playingBoard.handleFailure);
+        };
+
         /**
         * This method handles what happens when the snake wins.
         * @method handleDeath
@@ -448,6 +532,8 @@ SNAKE.Snake = SNAKE.Snake || (function() {
                 blocks.push(curNode);
                 curNode = nextNode;
             }
+            count = 0;
+            revisedQuestions = questions;
             me.snakeHead.next = me.snakeHead;
             me.snakeHead.prev = me.snakeHead;
             me.snakeTail = me.snakeHead;
@@ -760,7 +846,7 @@ SNAKE.Board = SNAKE.Board || (function() {
             myKeyListener,
             isPaused = false,//note: both the board and the snake can be paused
             // Board components
-            elmContainer, elmPlayingField, elmAboutPanel, elmLengthPanel, elmHighscorePanel, elmDoorClosedPanel, elmWelcome, elmTryAgain, elmWin, elmPauseScreen;
+            elmContainer, elmPlayingField, elmAboutPanel, elmLengthPanel, elmHighscorePanel, elmDoorClosedPanel, elmWelcome, elmTryAgain, elmTryHarder, elmWin, elmPauseScreen;
 
         // --- public variables ---
         me.grid = [];
@@ -783,8 +869,6 @@ SNAKE.Board = SNAKE.Board || (function() {
             elmPauseScreen.innerHTML = "<div style='padding:10px;'>[Paused]<p/>Press [space] to unpause.</div>";
 
             elmAboutPanel = document.createElement("div");
-            elmAboutPanel.className = "snake-panel-component";
-            //elmAboutPanel.innerHTML = "<a href='http://patorjk.com/blog/software/' class='snake-link'>more patorjk.com apps</a> - <a href='https://github.com/patorjk/JavaScript-Snake' class='snake-link'>source code</a> - <a href='https://www.instagram.com/patorjk/' class='snake-link'>pat's instagram</a>";
 
             elmLengthPanel = document.createElement("div");
             elmLengthPanel.className = "snake-panel-component";
@@ -800,6 +884,7 @@ SNAKE.Board = SNAKE.Board || (function() {
 
             elmWelcome = createWelcomeElement();
             elmTryAgain = createTryAgainElement();
+            elmTryHarder = createTryHarderElement();
             elmWin = createWinElement();
 
             SNAKE.addEventListener( elmContainer, "keyup", function(evt) {
@@ -822,6 +907,7 @@ SNAKE.Board = SNAKE.Board || (function() {
             elmContainer.appendChild(elmDoorClosedPanel);
             elmContainer.appendChild(elmWelcome);
             elmContainer.appendChild(elmTryAgain);
+            elmContainer.appendChild(elmTryHarder);
             elmContainer.appendChild(elmWin);
 
             mySnake = new SNAKE.Snake({playingBoard:me,startRow:2,startCol:2});
@@ -878,7 +964,11 @@ SNAKE.Board = SNAKE.Board || (function() {
             tmpElm.className = elmClassName;
 
             var gameEndTxt = document.createElement("div");
-            gameEndTxt.innerHTML = "JavaScript Snake<p></p>" + message + "<p></p>";
+            if (elmId === 'sbTryHarder') {
+              gameEndTxt.innerHTML = "JavaScript Snake<p></p>" + message + "<p></p><br><br><p>Nevermind I take it back, you're too much of a data concern. Think about what you've done. Take a long hard look at yourself. After you're done with that, refresh the page</p>";
+            } else {
+              gameEndTxt.innerHTML = "JavaScript Snake<p></p>" + message + "<p></p>";
+            }
             var gameEndStart = document.createElement("button");
             gameEndStart.appendChild(document.createTextNode("Play Again?"));
 
@@ -910,7 +1000,9 @@ SNAKE.Board = SNAKE.Board || (function() {
             return createGameEndElement("You died :(", "sbTryAgain", "snake-try-again-dialog");
         }
 
-        
+        function createTryHarderElement() {
+            return createGameEndElement("Sorry! You've failed. We're all very disappointed. Maybe you can try again. Except maybe do it right this time? PHI is no joke! Are you even taking this seriously?!?", "sbTryHarder", "snake-try-harder-dialog");
+        }
 
         function createWinElement() {
             return createGameEndElement("You win! :D", "sbWin", "snake-win-dialog");
@@ -1042,7 +1134,6 @@ SNAKE.Board = SNAKE.Board || (function() {
                 cLeft = 0;
                 cWidth = getClientWidth()-20;
                 cHeight = getClientHeight()-20;
-                
             } else {
                 cTop = config.top;
                 cLeft = config.left;
@@ -1189,6 +1280,10 @@ SNAKE.Board = SNAKE.Board || (function() {
             handleEndCondition(elmTryAgain);
         };
 
+        me.handleFailure = function() {
+            handleEndCondition(elmTryHarder);
+        };
+
         /**
         * This method is called when the snake wins.
         * @method handleWin
@@ -1220,6 +1315,4 @@ SNAKE.Board = SNAKE.Board || (function() {
         }
 
     }; // end return function
-})();  
-
-
+})();
