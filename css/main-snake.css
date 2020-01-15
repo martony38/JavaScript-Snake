@@ -86,7 +86,7 @@ a.snake-link:hover {
 .door-block {
     margin: 0px;
     padding: 0px;
-    background-color: #FF0000;
+    background-color: #00ff1f;
     border: 0px solid #000080;
     position: absolute;
     background-image: url('./images/door.png');
