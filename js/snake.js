@@ -796,7 +796,7 @@ SNAKE.Board = SNAKE.Board || (function() {
 
             elmDoorClosedPanel = document.createElement("div");
             elmDoorClosedPanel.className = "snake-panel-component";
-            elmDoorClosedPanel.innerHTML = "Door Closed: " + jsSnakeDoorClosed;
+            elmDoorClosedPanel.innerHTML = "Doors Closed: " + jsSnakeDoorClosed;
 
             elmWelcome = createWelcomeElement();
             elmTryAgain = createTryAgainElement();
@@ -1031,7 +1031,7 @@ SNAKE.Board = SNAKE.Board || (function() {
             
 
             if (!elmPlayingField) {createBoardElements();} // create playing field
-            elmDoorClosedPanel.innerHTML = "Door Closed: " + jsSnakeDoorClosed;
+            elmDoorClosedPanel.innerHTML = "Doors Closed: " + jsSnakeDoorClosed;
             
 
             // calculate width of our game container
