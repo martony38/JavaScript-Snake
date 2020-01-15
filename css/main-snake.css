@@ -32,7 +32,7 @@ a.snake-link:hover {
   color: #FfFf54;
 }
 
-.snake-pause-screen {
+.snake-pause-screen, .snake-try-harder-dialog {
     font-family: Verdana, arial, helvetica, sans-serif;
     font-size: 14px;
     position:absolute;
@@ -46,6 +46,21 @@ a.snake-link:hover {
     display:none;
     background-color:black;
     color:white;
+}
+
+.snake-try-harder-dialog {
+	height:245px;
+	width:320px;
+	padding: 10px;
+	top: 35%;
+}
+
+.snake-try-harder-dialog button {
+	opacity: .5;
+	pointer-events: none;
+	position: absolute;
+	top: 135px;
+	left: 37%;
 }
 
 .snake-panel-component {
