@@ -83,6 +83,17 @@ a.snake-link:hover {
     position: absolute;
 }
 
+.door-block {
+    margin: 0px;
+    padding: 0px;
+    background-color: #FF0000;
+    border: 0px solid #000080;
+    position: absolute;
+    background-image: url('./images/door.png');
+    background-position: center;
+    background-size: contain;
+}
+
 .snake-playing-field {
     margin: 0px;
     padding: 0px;

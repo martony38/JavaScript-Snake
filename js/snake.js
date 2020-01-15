@@ -346,8 +346,20 @@ SNAKE.Snake = SNAKE.Snake || (function() {
                     return;
                 }
                 setTimeout(function(){me.go();}, snakeSpeed);
+            } else if (grid[newHead.row][newHead.col] === playingBoard.getGridDoorValue()) {
+                grid[newHead.row][newHead.col] = 1;
+                if (!me.closeDoor()) {
+                    return;
+                }
+                
+                showDoorMessage()
+                setTimeout(function(){me.go();}, snakeSpeed);
             }
         };
+
+        function showDoorMessage() {
+            window.alert("TailGate ALERT!!!!! You left another door open behind you!");
+        }
 
         /**
         * This method is called when it is determined that the snake has eaten some food.
@@ -381,6 +393,14 @@ SNAKE.Snake = SNAKE.Snake || (function() {
                 return false;
             }
 
+            return true;
+        };
+
+        me.closeDoor = function() {
+
+            if (!playingBoard.doorClosed()) {
+                return false;
+            }
             return true;
         };
 
@@ -564,6 +584,96 @@ SNAKE.Food = SNAKE.Food || (function() {
     };
 })();
 
+SNAKE.Door = SNAKE.Door || (function() {
+
+    // -------------------------------------------------------------------------
+    // Private static variables and methods
+    // -------------------------------------------------------------------------
+
+    var instanceNumber = 0;
+
+    function getRandomPosition(x, y){
+        return Math.floor(Math.random()*(y+1-x)) + x;
+    }
+
+    // -------------------------------------------------------------------------
+    // Contructor + public and private definitions
+    // -------------------------------------------------------------------------
+
+    /*
+        config options:
+            playingBoard - the SnakeBoard that this object belongs too.
+    */
+    return function(config) {
+
+        if (!config||!config.playingBoard) {return;}
+
+        // ----- private variables -----
+
+        var me = this;
+        var playingBoard = config.playingBoard;
+        var fRow, fColumn;
+        var myId = instanceNumber++;
+
+        var elmDoor = document.createElement("div");
+        elmDoor.setAttribute("id", "door-"+myId);
+        elmDoor.className = "door-block";
+        elmDoor.style.width = playingBoard.getBlockWidth() + "px";
+        elmDoor.style.height = playingBoard.getBlockHeight() + "px";
+        elmDoor.style.left = "-1000px";
+        elmDoor.style.top = "-1000px";
+        playingBoard.getBoardContainer().appendChild(elmDoor);
+
+        // ----- public methods -----
+
+        /**
+        * @method getFoodElement
+        * @return {DOM Element} The div the represents the food.
+        */
+        me.getDoorElement = function() {
+            return elmDoor;
+        };
+
+        /**
+        * Randomly places the food onto an available location on the playing board.
+        * @method randomlyPlaceFood
+        * @return {bool} Whether a food was able to spawn (true) or not (false).
+        */
+        me.randomlyPlaceDoor = function() {
+            // if there exist some food, clear its presence from the board
+            //if (playingBoard.grid[fRow] && playingBoard.grid[fRow][fColumn] === playingBoard.getGridDoorValue()){
+            //    playingBoard.grid[fRow][fColumn] = 0;
+            //}
+
+            var row = 0, col = 0, numTries = 0;
+
+            var maxRows = playingBoard.grid.length-1;
+            var maxCols = playingBoard.grid[0].length-1;
+
+            while (playingBoard.grid[row][col] !== 0){
+                row = getRandomPosition(1, maxRows);
+                col = getRandomPosition(1, maxCols);
+
+                // in some cases there may not be any room to put food anywhere
+                // instead of freezing, exit out (and return false to indicate
+                // that the player beat the game)
+                numTries++;
+                if (numTries > 20000){
+                    return false;
+                }
+            }
+
+            playingBoard.grid[row][col] = playingBoard.getGridDoorValue();
+            fRow = row;
+            fColumn = col;
+            elmDoor.style.top = row * playingBoard.getBlockHeight() + "px";
+            elmDoor.style.left = col * playingBoard.getBlockWidth() + "px";
+
+            return true;
+        };
+    };
+})();
+
 /**
 * This class manages playing board for the game.
 * @class Board
@@ -642,7 +752,9 @@ SNAKE.Board = SNAKE.Board || (function() {
             blockWidth = 20,
             blockHeight = 20,
             GRID_FOOD_VALUE = -1, // the value of a spot on the board that represents snake food, MUST BE NEGATIVE
+            GRID_DOOR_VALUE = -2,
             myFood,
+            myDoor,
             mySnake,
             boardState = 1, // 0: in active; 1: awaiting game start; 2: playing game
             myKeyListener,
@@ -708,6 +820,7 @@ SNAKE.Board = SNAKE.Board || (function() {
 
             mySnake = new SNAKE.Snake({playingBoard:me,startRow:2,startCol:2});
             myFood = new SNAKE.Food({playingBoard: me});
+            myDoor = new SNAKE.Door({playingBoard: me});
 
             elmWelcome.style.zIndex = 1000;
         }
@@ -728,7 +841,7 @@ SNAKE.Board = SNAKE.Board || (function() {
             if (config.fullScreen) {
                 fullScreenText = "On Windows, press F11 to play in Full Screen mode.";
             }
-            welcomeTxt.innerHTML = "JavaScript Snake<p></p>Use the <strong>arrow keys</strong> on your keyboard to play the game. " + fullScreenText + "<p></p>";
+            welcomeTxt.innerHTML = "HIPAA Snake<p></p>You left a door open behind you on your way to HIPAA training, Close it now to prevent any intruder to get access to sensible information. Use the <strong>arrow keys</strong> on your keyboard to play the game. " + fullScreenText + "<p></p>";
             var welcomeStart = document.createElement("button");
             welcomeStart.appendChild(document.createTextNode("Play Game"));
             var loadGame = function() {
@@ -786,9 +899,12 @@ SNAKE.Board = SNAKE.Board || (function() {
             return tmpElm;
         }
 
+
         function createTryAgainElement() {
             return createGameEndElement("You died :(", "sbTryAgain", "snake-try-again-dialog");
         }
+
+        
 
         function createWinElement() {
             return createGameEndElement("You win! :D", "sbWin", "snake-win-dialog");
@@ -852,6 +968,10 @@ SNAKE.Board = SNAKE.Board || (function() {
         */
         me.getGridFoodValue = function() {
             return GRID_FOOD_VALUE;
+        };
+
+        me.getGridDoorValue = function() {
+            return GRID_DOOR_VALUE;
         };
         /**
         * @method getPlayingFieldElement
@@ -972,6 +1092,7 @@ SNAKE.Board = SNAKE.Board || (function() {
             }
 
             myFood.randomlyPlaceFood();
+            myDoor.randomlyPlaceDoor();
 
             myKeyListener = function(evt) {
                 if (!evt) var evt = window.event;
@@ -1037,6 +1158,13 @@ SNAKE.Board = SNAKE.Board || (function() {
             return true;
         };
 
+        me.doorClosed = function() {
+            if (!myDoor.randomlyPlaceDoor()) {
+                return false;
+            }
+            return true;
+        };
+
         /**
         * This method is called when the snake dies.
         * @method handleDeath
@@ -1077,3 +1205,5 @@ SNAKE.Board = SNAKE.Board || (function() {
 
     }; // end return function
 })();  
+
+
