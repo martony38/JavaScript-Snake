@@ -427,7 +427,7 @@ SNAKE.Snake = SNAKE.Snake || (function() {
         };
 
         function showDoorMessage() {
-            window.alert("TailGate ALERT!!!!! You left another door open behind you!");
+            window.alert("TAILGATING ALERT!!!!! You left another door open behind you, and somenone suspicious looking is heading towards it!");
         }
 
         /**
