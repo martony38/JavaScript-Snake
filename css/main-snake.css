@@ -6,13 +6,13 @@ http://patorjk.com/games/snake
 body {
 	margin:0px;
 	padding:0px;
-    background-color: #FC5454;
+    background-color: #263652;
 }
 
 #game-area {
 	margin:10px;
 	padding:0px;
-    background-color: #FC5454;
+    background-color: #263652;
 }
 
 #mode-wrapper {
@@ -69,7 +69,7 @@ a.snake-link:hover {
     font-size: 14px;
     color: #ffffff;
     text-align: center;
-    background-color: #FC5454;
+    background-color: #263652;
     padding: 8px;
     margin: 0px;
 }
@@ -93,28 +93,31 @@ a.snake-link:hover {
 .snake-food-block {
     margin: 0px;
     padding: 0px;
-    background-color: #FF0000;
-    border: 0px solid #000080;
+    background-image: url('./images/logo-lens-full-color.svg');
     position: absolute;
 }
 
 .door-block {
     margin: 0px;
     padding: 0px;
-    background-color: #00ff1f;
+    background-color: #4892c7;
     border: 0px solid #000080;
     position: absolute;
     background-image: url('./images/door.png');
     background-position: center;
     background-size: contain;
+		background-repeat: no-repeat;
+		border-radius: 5px;
+		padding: 2px 0;
 }
 
 .snake-playing-field {
     margin: 0px;
     padding: 0px;
     position: absolute;
-    background-color: #0000A8;
+    background-color: #263652;
     border: 0px solid #0000A8;
+		box-shadow: 0 0 8px rgba(0,0,0,.7);
 }
 
 .snake-game-container {
@@ -123,7 +126,7 @@ a.snake-link:hover {
     border-width: 0px;
     border-style: none;
     zoom: 1;
-    background-color: #FC5454;
+    background-color: #263652;
     position: relative;
 }
 
