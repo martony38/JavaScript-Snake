@@ -933,7 +933,7 @@ SNAKE.Board = SNAKE.Board || (function() {
             if (config.fullScreen) {
                 fullScreenText = "On Windows, press F11 to play in Full Screen mode.";
             }
-            welcomeTxt.innerHTML = "HIPAA Snake<p></p>You left a door open (green box) behind you on your way to HIPAA training (red box), Close it now to prevent any intruder to get access to sensitive information. Use the <strong>arrow keys</strong> on your keyboard to play the game.<p></p>";
+            welcomeTxt.innerHTML = "HIPAA Snake<p></p>You left a door open (blue box) behind you on your way to HIPAA training (Innovu logo). Close it now to prevent any intruder to get access to sensitive information. Don't forget to go to your training. Use the <strong>arrow keys</strong> on your keyboard to play the game.<p></p>";
             var welcomeStart = document.createElement("button");
             welcomeStart.appendChild(document.createTextNode("Play Game"));
             var loadGame = function() {
