@@ -420,7 +420,7 @@ SNAKE.Snake = SNAKE.Snake || (function() {
                 if (!me.closeDoor()) {
                     return;
                 }
-                
+
                 showDoorMessage()
                 setTimeout(function(){me.go();}, snakeSpeed);
             }
@@ -965,9 +965,9 @@ SNAKE.Board = SNAKE.Board || (function() {
 
             var gameEndTxt = document.createElement("div");
             if (elmId === 'sbTryHarder') {
-              gameEndTxt.innerHTML = "JavaScript Snake<p></p>" + message + "<p></p><br><br><p>Nevermind I take it back, you're too much of a data concern. Think about what you've done. Take a long hard look at yourself. After you're done with that, refresh the page</p>";
+              gameEndTxt.innerHTML = "HIPAA Snake<p></p>" + message + "<p></p><br><br><p>Nevermind I take it back, you're too much of a data concern. Think about what you've done. Take a long hard look at yourself. After you're done with that, refresh the page</p>";
             } else {
-              gameEndTxt.innerHTML = "JavaScript Snake<p></p>" + message + "<p></p>";
+              gameEndTxt.innerHTML = "HIPAA Snake<p></p>" + message + "<p></p>";
             }
             var gameEndStart = document.createElement("button");
             gameEndStart.appendChild(document.createTextNode("Play Again?"));
@@ -1120,11 +1120,11 @@ SNAKE.Board = SNAKE.Board || (function() {
         me.setupPlayingField = function () {
 
             jsSnakeDoorClosed = 0
-            
+
 
             if (!elmPlayingField) {createBoardElements();} // create playing field
             elmDoorClosedPanel.innerHTML = "Doors Closed: " + jsSnakeDoorClosed;
-            
+
 
             // calculate width of our game container
             var cWidth, cHeight;
